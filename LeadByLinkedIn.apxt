@@ -1,0 +1,45 @@
+Trigger LeadByLinkedIn on Lead (after insert) {
+  
+    List<lead> newLeads = Trigger.new;                                    // List of Lead Standard Object
+    
+    List<Leads__c> TransferLeads = new List <Leads__c>{};                 // List Of Custom Lead Object
+        
+        for (Lead currentlead : newLeads){                                // Loop to tansfer standard Lead object list - records one by one to "currentlead" vaiable
+            
+            if (currentlead.LeadSource == 'LinkedIn'){                    // if the lead sorurce in standard Lead object is 'Linkedin" than execute further
+                
+            Leads__c newlead = new Leads__c(                              // Now transfer the record one by one from Standard to custom object through variable "newLead"
+                	First_Name__c = currentlead.Firstname, 
+                    Last_Name__c =currentlead.Lastname,
+                    Company_Name__c = currentlead.Company,
+                    Phone_Number__c = currentlead.Phone,
+                    Industry__c = currentlead.Phone,
+                    Email__c = currentlead.Email,
+                    City__c = currentlead.City,                              // now all the fields in Custom object will got the value from Standard through current leads record
+                    State__c = currentlead.State,
+                    Country__c = currentlead.Country,
+                    Zip_Code__c = currentlead.Zip_code__c,
+                    Job_Title__c = currentlead.Job_Title__c,
+                    Job_Function__c = currentlead.Job_Function__c,
+                    Seniority__c = currentlead.Seniority__c,
+                    Company_Size__c = currentlead.Company_Size__c,
+                    Field_Of_Study__c = currentlead.Field_Of_Study__c,
+                    School__c = currentlead.School__c,
+                    Start_Date__c = currentlead.Start_Date__c,
+                    Graduation_Date__c = currentlead.Graduation_Date__c,
+                    Work_Phone_Number__c = currentlead.Work_Phone_Number__c,
+                    Work_Email__c = currentlead.Work_Email__c,
+                    Gender__c = currentlead.Gender__c,
+                    Degree__c = currentlead.Degree__c,
+                    LinkedIn_Profile_URL__c = currentlead.LinkedIn_Profile_URL__c );
+                
+                TransferLeads.add(newlead);                                                 // add leads from standard list to Custom lead list through new variable creted "newlead" in which transfered all the fields data 
+            }
+        }
+            
+    insert TransferLeads;                                                                   // Insert leads from standard Lead Object to Custom Lead Object
+  system.debug('LeadByLinkedIn =>' + newLeads);
+    
+	List<lead> leadList=[SELECT Id FROM Lead WHERE LeadSource='linkedin'] ;                 // Create a new list from Standard Lead Object to Delete after insertion of records in Custom object
+    delete(leadList);                                                                       // Delete list of standard lead records
+}
